@@ -1,5 +1,5 @@
 (ns star-tracker.core
-  (:require 
+  (:require
      [clojure.tools.cli             :refer [parse-opts]]
      [clojure.java.io               :as io]
      [org.httpkit.server            :refer [run-server]]
@@ -37,7 +37,7 @@
 (defn build-log-map
   [req]
   (let [ts (java.util.Date.)]
-  (try 
+  (try
       {:params (:params req)
        :ip (remove nil? [(:remote-addr req) (get-in req [:headers "x-real-ip"])])
        :host (get-in req [:headers "host"])
@@ -56,7 +56,7 @@
 (defn log-request
   [req & [pipe]]
   (let [data (build-log-map req)]
-    (sometimes 0.1 data)
+    (sometimes 0.1 (info data))
     (go (>! pipe ["test" (generate-string data)]))
     ))
 
@@ -64,7 +64,7 @@
   {:status  204
    :headers default-headers})
 
-(defn img-request 
+(defn img-request
   [req pipe]
   (log-request req pipe)
   {:status  200
@@ -82,7 +82,7 @@
   (start [this]
     (info "Starting HTTP Component")
     (let [pipe (:channel pipe)]
-      (try 
+      (try
         (defroutes app-routes
           (resources "/")
           (HEAD "/" [] "")
@@ -106,8 +106,8 @@
           (info "Listening events now...")
 
         (assoc this :server server))
-      (catch Throwable t 
-        (do 
+      (catch Throwable t
+        (do
           (error t))))))
 
   (stop [this]
@@ -120,20 +120,20 @@
   [port]
   (map->HTTP {:port port}))
 
-(defn app-system 
+(defn app-system
   [options]
   (let [{:keys [zk port aws-key aws-secret aws-endpoint aws-kinesis-stream pipe]} options
       event-pipe (if (= pipe "kinesis")
                     (sys.kinesis/kinesis-producer (select-keys options [:aws-key :aws-secret :aws-endpoint :aws-kinesis-stream]))
                     (sys.kafka/kafka-producer zk))]
-  (-> (component/system-map 
+  (-> (component/system-map
         :pipe event-pipe
-        :app (component/using 
+        :app (component/using
             (http-server port)
             [:pipe]
           )))))
 
-(def cli-options 
+(def cli-options
   [["-p" "--port PORT" "Port number"
     :default 10000
     :parse-fn #(Integer/parseInt %)
@@ -150,13 +150,13 @@
   "I don't do a whole lot ... yet."
   [& args]
   (info "Arranging settings and logging..")
-  (reset! timbre/config log-base/log-config)
+  (timbre/merge-config! log-base/log-config)
   (timbre/set-level! :info)
   (info "Starting up engines..")
   (let [parsed-options (parse-opts args cli-options)
         options (:options parsed-options)]
     (info options)
-    
+
   ; (start-up settings)
   (let [sys (component/start (app-system options))]
     (info "System started..")
