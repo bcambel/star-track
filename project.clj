@@ -1,4 +1,4 @@
-(defproject star-tracker "0.1.3"
+(defproject star-tracker "0.1.3.1"
   :description "Event collector"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -13,9 +13,10 @@
     [ring "1.4.0"]
     [http-kit "2.1.19"]
     [com.taoensso/timbre "4.3.1" :exclusions [org.clojure/tools.reader]]
-    [cheshire "5.6.0"]
+    [cheshire "5.6.1"]
     [midje "1.8.3"]
-    [clj-kafka/clj-kafka "0.2.8-0.8.1.1"]
+    [metrics-clojure "2.6.1"]
+    [clj-kafka/clj-kafka "0.3.4"]
     [amazonica "0.3.57" :exclusions [com.taoensso/encore org.clojure/tools.reader com.taoensso/nippy]]
     [com.taoensso/nippy "2.7.0"]
     ]
