@@ -13,6 +13,7 @@
      [compojure.handler            :refer [site]]
      [clojure.core.async :as async :refer [go >! chan]]
      [com.stuartsierra.component   :as component]
+     [metrics.reporters.jmx        :as jmx]
      [star-tracker.system.kafka    :as sys.kafka]
      [star-tracker.system.kinesis  :as sys.kinesis]
      [taoensso.timbre              :as timbre
@@ -21,6 +22,8 @@
   (:gen-class))
 
 (def settings (atom {:json true}))
+
+(def JR (jmx/reporter {}))
 
 (def default-headers {"Expires" "0"
                       "Pragma" "no-cache"
@@ -88,6 +91,7 @@
           (HEAD "/" [] "")
           (GET "/"  request (base-request request pipe))
           (GET "/report"  request (base-request request pipe))
+          (POST "/report"  request (base-request request pipe))
           (GET "/r" [] redirect-request)
           (GET "/pixel.gif" request (img-request request pipe))
           (GET "/ping" request {:status  200 :body "pong" })
@@ -153,6 +157,7 @@
   (timbre/merge-config! log-base/log-config)
   (timbre/set-level! :info)
   (info "Starting up engines..")
+  (jmx/start JR)
   (let [parsed-options (parse-opts args cli-options)
         options (:options parsed-options)]
     (info options)
