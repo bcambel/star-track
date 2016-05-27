@@ -1,4 +1,4 @@
-(defproject star-tracker "0.1.3.1"
+(defproject star-tracker "0.1.4"
   :description "Event collector"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
