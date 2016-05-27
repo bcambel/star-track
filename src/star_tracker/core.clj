@@ -16,6 +16,7 @@
      [metrics.reporters.jmx        :as jmx]
      [star-tracker.system.kafka    :as sys.kafka]
      [star-tracker.system.kinesis  :as sys.kinesis]
+     [star-tracker.system.local     :as sys.local]
      [taoensso.timbre              :as timbre
            :refer (log  trace  debug  info  warn  error  fatal  report sometimes)])
   (:import [org.apache.commons.io FileUtils])
@@ -124,12 +125,17 @@
   [port]
   (map->HTTP {:port port}))
 
+
+
 (defn app-system
   [options]
   (let [{:keys [zk port aws-key aws-secret aws-endpoint aws-kinesis-stream pipe]} options
-      event-pipe (if (= pipe "kinesis")
-                    (sys.kinesis/kinesis-producer (select-keys options [:aws-key :aws-secret :aws-endpoint :aws-kinesis-stream]))
-                    (sys.kafka/kafka-producer zk))]
+      event-pipe (condp = pipe
+                    "kinesis" (sys.kinesis/kinesis-producer (select-keys options [:aws-key :aws-secret :aws-endpoint :aws-kinesis-stream]))
+                    "kafka"(sys.kafka/kafka-producer zk)
+                    "local" (sys.local/map->LocalFileProducer options)
+                    (throw (IllegalArgumentException. "Invalid mode selected. "))
+                    )]
   (-> (component/system-map
         :pipe event-pipe
         :app (component/using

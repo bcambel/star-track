@@ -21,7 +21,7 @@
     [com.taoensso/nippy "2.7.0"]
     ]
   ; :java-agents [[com.newrelic.agent.java/newrelic-agent "3.28.0"]]
-  :main star-tracker.core
+  ; :main star-tracker.core
   ; :uberjar-name "star-tracker.jar"
   :jvm-opts ["-Dlog4j.configuration=file:./log4j.properties"]
   :target-path "target/%s"
@@ -29,5 +29,7 @@
     :timeout 1200000
   }
   :profiles {:uberjar {:aot :all}
-      :dev {:plugins [[lein-midje "3.1.3"]]}
+      :dev {:plugins [[lein-midje "3.1.3"]]
+            :dependencies [[org.clojure./tools.namespace "0.2.11"]]
+            :source-paths ["dev"]  }
     })
