@@ -96,6 +96,9 @@
           (GET "/r" [] redirect-request)
           (GET "/pixel.gif" request (img-request request pipe))
           (GET "/ping" request {:status  200 :body "pong" })
+          (GET "/proxy/*" request (base-request request pipe))
+          (POST "/proxy/*" request (base-request request pipe))
+          (GET "/proxy/*/*" request (base-request request pipe))
           (route/not-found "<p>Page not found.</p>"))
 
         (def http-handler
