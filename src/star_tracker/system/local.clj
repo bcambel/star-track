@@ -12,7 +12,7 @@
     (let [producing-channel (chan 65532)]
     (go (while true
       (let [[[topic msg] ch] (alts! [producing-channel])]
-        (spit "tracker.log" msg :append true))))
+        (spit "tracker.log" (str msg "\n") :append true))))
       (assoc component :channel producing-channel)
       )
     )
