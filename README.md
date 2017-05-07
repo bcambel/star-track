@@ -1,4 +1,4 @@
-# star-track [![Build Status](https://travis-ci.org/travelbird/star-track.svg?branch=master)](https://travis-ci.org/travelbird/star-track)
+# star-track [![Build Status](https://travis-ci.org/bcambel/star-track.svg?branch=master)](https://travis-ci.org/bcambel/star-track)
 
 Track/Collect events
 
@@ -14,7 +14,7 @@ FIXME: explanation
 
 ## License
 
-Copyright (c) 2015 TravelBird
+Copyright (c) 2017 Bahadir Cambel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
